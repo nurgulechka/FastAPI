@@ -11,10 +11,14 @@ class AuthRepository:
     def __init__(self, database: Database):
         self.database = database
 
+    # added city, phone, name params
     def create_user(self, user: dict):
         payload = {
+            "name": user["name"],
             "email": user["email"],
             "password": hash_password(user["password"]),
+            "phone": user["phone"],
+            "city": user["city"],
             "created_at": datetime.utcnow(),
         }
 
@@ -35,3 +39,6 @@ class AuthRepository:
             }
         )
         return user
+
+    # def get_user_info(self):
+    #     user = self.database["users"]
