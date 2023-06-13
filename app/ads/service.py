@@ -1,24 +1,23 @@
+from app.config import database
 from pydantic import BaseSettings
 
-from app.config import database
-
 from .adapters.jwt_service import JwtService
-from .repository.repository import AuthRepository
+from .repository.repository import AdsRepository
 
 
-class AuthConfig(BaseSettings):
+class AdsConfig(BaseSettings):
     JWT_ALG: str = "HS256"
     JWT_SECRET: str = "YOUR_SUPER_SECRET_STRING"
     JWT_EXP: int = 10_800
 
 
-config = AuthConfig()
+config = AdsConfig()
 
 
 class Service:
     def __init__(
         self,
-        repository: AuthRepository,
+        repository: AdsConfig,
         jwt_svc: JwtService,
     ):
         self.repository = repository
@@ -26,7 +25,7 @@ class Service:
 
 
 def get_service():
-    repository = AuthRepository(database)
+    repository = AdsConfig(database)
     jwt_svc = JwtService(config.JWT_ALG, config.JWT_SECRET, config.JWT_EXP)
 
     svc = Service(repository, jwt_svc)
