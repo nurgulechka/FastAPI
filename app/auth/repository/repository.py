@@ -32,6 +32,17 @@ class AuthRepository:
         )
         return user
 
+    def update_param(self, user: dict):
+        update_user = {
+            "name": user["name"],
+            "email": user["email"],
+            "password": hash_password(user["password"]),
+            "phone": user["phone"],
+            "city": user["city"],
+        }
+
+        self.database["users"][self] = update_user
+
     def get_user_by_email(self, email: str) -> Optional[dict]:
         user = self.database["users"].find_one(
             {
