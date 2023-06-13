@@ -1,32 +1,38 @@
-# from fastapi import Depends
-# from fastapi.security import OAuth2PasswordRequestForm
+from typing import Optional
 
-# from app.utils import AppModel
+from app.utils import AppModel
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordRequestForm
 
-# from ..service import Service, get_service
-# from ..utils.security import check_password
-# from . import router
-# from .errors import InvalidCredentialsException
-
-
-# class AuthorizeUserResponse(AppModel):
-#     access_token: str
-#     token_type: str = "Bearer"
+from ..adapters.jwt_service import JWTData
+from ..service import Service, get_service
+from ..utils.security import check_password
+from . import router
+from .dependencies import parse_jwt_user_data
+from .errors import InvalidCredentialsException
 
 
-# @router.patch("/users/tokens", response_model=AuthorizeUserResponse)
-# def authorize_user(
-#     input: OAuth2PasswordRequestForm = Depends(),
-#     svc: Service = Depends(get_service),
-# ) -> AuthorizeUserResponse:
-#     user = svc.repository.get_user_by_email(input.username)
+class GetMyAccountRequest:
+    phone: Optional[str]
+    city: Optional[str]
+    email: Optional[str]
 
-#     if not user:
-#         raise InvalidCredentialsException
 
-#     if not check_password(input.password, user["password"]):
-#         raise InvalidCredentialsException
+class GetMyAccountResponse(AppModel):
+    access_token: str
+    token_type: str = "Bearer"
 
-#     return AuthorizeUserResponse(
-#         access_token=svc.jwt_svc.create_access_token(user=user),
-#     )
+
+@router.patch("/users/me", response_model=GetMyAccountResponse)
+def patch_my_data(
+    input: GetMyAccountRequest,
+    jwt_data: JWTData = Depends(parse_jwt_user_data),
+    svc: Service = Depends(get_service),
+) -> GetMyAccountResponse:
+    user = svc.repository.get_user_by_id(jwt_data.user_id)
+    # if input.name:
+    # if input.city:
+    # if input.email:
+    # if input.phone:
+    svc.repository.update_param(user, input.dict())
+    return Response(status_code=200)

@@ -17,7 +17,7 @@ config = AdsConfig()
 class Service:
     def __init__(
         self,
-        repository: AdsConfig,
+        repository: AdsRepository,
         jwt_svc: JwtService,
     ):
         self.repository = repository
@@ -25,7 +25,7 @@ class Service:
 
 
 def get_service():
-    repository = AdsConfig(database)
+    repository = AdsRepository(database)
     jwt_svc = JwtService(config.JWT_ALG, config.JWT_SECRET, config.JWT_EXP)
 
     svc = Service(repository, jwt_svc)

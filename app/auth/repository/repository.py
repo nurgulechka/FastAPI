@@ -32,17 +32,27 @@ class AuthRepository:
         )
         return user
 
+    # user_id
     def update_param(self, user: dict):
         update_user = {
             "name": user["name"],
-            "email": user["email"],
-            "password": hash_password(user["password"]),
             "phone": user["phone"],
             "city": user["city"],
         }
 
-        self.database["users"][self] = update_user
+        self.database["users"] = update_user
 
+    # def update_user(self, user_id: str, data: dict):
+    #     self.database["users"].update_one(
+    #         filter={"_id": ObjectId(user_id)},
+    #         update={
+    #             "$set": {
+    #                 "phone": data["phone"],
+    #                 "name": data["name"],
+    #                 "city": data["city"],
+    #             }
+    #         },
+    #     )
     def get_user_by_email(self, email: str) -> Optional[dict]:
         user = self.database["users"].find_one(
             {

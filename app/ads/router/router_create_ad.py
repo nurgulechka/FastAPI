@@ -12,35 +12,24 @@ from .dependencies import parse_jwt_user_data
 
 class CreateAdRequest(AppModel):
     type_: str
-    price: str
+    price: int
     address: str
-    area: str
-    rooms_count: str
+    area: float
+    rooms_count: int
     description: str
 
 
-# class AuthorizeUserResponse(AppModel):
-#     access_token: str
-#     token_type: str = "Bearer"
+class CreateAdResponse(AppModel):
+    id: Any = Field(alias="_id")
 
 
-@router.post("/")  # , response_model=AuthorizeUserResponse)
+@router.post("/", response_model=CreateAdResponse)
 def create_ad(
     input: CreateAdRequest,
     jwt_data: JWTData = Depends(parse_jwt_user_data),
     svc: Service = Depends(get_service),
-) -> dict[str, str]:
+) -> dict[str, Any]:
     user_id = jwt_data.user_id
-    svc.repository.create_ad(
-        {
-            "user_id": user_id,
-            "type_": input.type_,
-            "price": input.price,
-            "address": input.address,
-            "area": input.area,
-            "rooms_count": input.rooms_count,
-            "description": input.description,
-        }
-    )
+    ad_id = svc.repository.create_ad(user_id, input.dict())
 
-    return Response(status_code=200)
+    return CreateAdResponse(id=ad_id)
