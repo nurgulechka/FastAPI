@@ -11,18 +11,11 @@ from .dependencies import parse_jwt_user_data
 
 
 class CreateAdRequest(AppModel):
-    # "user_id": ObjectId(input["user_id"]),
-    #         "type_": ads["type"],
-    #         "price": ads["price"],
-    #         "address": ads["address"],
-    #         "area": ads["area"],
-    #         "rooms_count": ads["rooms_count"],
-    #         "description": ads["description"],
     type_: str
-    price: int
+    price: str
     address: str
-    area: float
-    rooms_count: int
+    area: str
+    rooms_count: str
     description: str
 
 
@@ -38,6 +31,16 @@ def create_ad(
     svc: Service = Depends(get_service),
 ) -> dict[str, str]:
     user_id = jwt_data.user_id
-    svc.repository.create_ad({"user_id": user_id, "ads": input.dict()})
+    svc.repository.create_ad(
+        {
+            "user_id": user_id,
+            "type_": input.type_,
+            "price": input.price,
+            "address": input.address,
+            "area": input.area,
+            "rooms_count": input.rooms_count,
+            "description": input.description,
+        }
+    )
 
     return Response(status_code=200)
