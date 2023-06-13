@@ -1,7 +1,7 @@
 from typing import Any, List
 
 from app.utils import AppModel
-from fastapi import Depends
+from fastapi import Depends, Response
 from pydantic import Field
 
 from ..adapters.jwt_service import JWTData
@@ -34,5 +34,6 @@ def get_ad_by_user_id(
     # ads = svc.repository.get_ads_by_user_id(ads_id)
     user_id = jwt_data.user_id
     ads = svc.repository.get_ads_by_user_id(user_id)
-    resp = {"ads": ads}
-    return resp
+    if ads is None:
+        return Response(status_code=404)
+    return {"ads": ads}

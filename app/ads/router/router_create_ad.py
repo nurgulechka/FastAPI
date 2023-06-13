@@ -31,5 +31,4 @@ def create_ad(
 ) -> dict[str, Any]:
     user_id = jwt_data.user_id
     ad_id = svc.repository.create_ad(user_id, input.dict())
-
     return CreateAdResponse(id=ad_id)

@@ -3,7 +3,7 @@ from typing import List
 
 from bson.objectid import ObjectId
 from pymongo.database import Database
-from pymongo.results import DeleteResult
+from pymongo.results import DeleteResult, UpdateResult
 
 
 class AdsRepository:
@@ -38,5 +38,15 @@ class AdsRepository:
         # return self.database["ads"].find_many({"user_id": ObjectId(user_id)})
 
     def delete_ad(self, ad_id: str, user_id: str) -> DeleteResult:
+        return self.database["ads"].delete_one(
+            {"_id": ObjectId(ad_id), "user_id": ObjectId(user_id)}
+        )
+
+    def update_ad(self, ad_id: str, user_id: str, updated_data: dict) -> UpdateResult:
+        # usr_id = ObjectId(user_id)
+        self.database["ads"].update_one(
+            filter={"_id": ObjectId(ad_id), "user_id": ObjectId(user_id)},
+            update={"$set": updated_data},
+        )
 
     # def update_ad_by_user(self, user_id: str, ads: dict):

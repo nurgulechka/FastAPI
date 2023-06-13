@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.utils import AppModel
-from fastapi import Depends
+from fastapi import Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..adapters.jwt_service import JWTData
